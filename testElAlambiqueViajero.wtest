@@ -1,4 +1,5 @@
 import elAlambiqueViajero.*
+import parte2.*
 test "luke cuenta cuando va de viaje"{
     luke.viajar(paris)
     assert.equals(1, luke.cantidadViajes())
@@ -62,3 +63,48 @@ test "luke viaja a hurlingham en el convertible convertido en chatarra" {
   assert.equals(5,chatarra.cañones())
 
   }
+
+
+describe "Tests de la Carrera" {
+
+	test "Un vehículo que no puede circular en París es rechazado" {
+		// Alambique sin combustible (necesita 10 para circular en París)
+		alambiqueVeloz.combustible(5) 
+		centroInscripcion.sedeActual(paris)
+		
+		centroInscripcion.inscribir(alambiqueVeloz)
+		
+		assert.that(centroInscripcion.rechazados().contains(alambiqueVeloz))
+	}
+
+	test "Al cambiar la sede a Bagdad, los rechazados pueden entrar" {
+		// París rechaza a la moto (porque su patente no es válida)
+		centroInscripcion.sedeActual(paris)
+		centroInscripcion.inscribir(moto)
+		
+		// Cambiamos a Bagdad (donde todos pueden entrar)
+		centroInscripcion.cambiarSede(bagdad)
+		
+		assert.that(centroInscripcion.inscriptos().contains(moto))
+		assert.notThat(centroInscripcion.rechazados().contains(moto))
+	}
+
+	test "El ganador de la carrera es el más rápido" {
+		centroInscripcion.sedeActual(bagdad)
+		centroInscripcion.inscribir(alambiqueVeloz) // Vel: 80 (aprox)
+		centroInscripcion.inscribir(moto)           // Vel: 120
+		
+		// El ganador debería ser la moto
+		assert.equals(moto, centroInscripcion.realizarCarrera(100))
+	}
+
+	test "La Antigualla Blindada calcula bien su velocidad por las letras" {
+		// Si los gangsters son ["G1", "G2"] -> son 4 letras
+		// Ajustamos los gangsters para el test
+		antiguallaBlindada.vaciarGangsters()
+		antiguallaBlindada.subirGangster("Paz") // 3 letras
+		antiguallaBlindada.subirGangster("Luz") // 3 letras
+		
+		assert.equals(6, antiguallaBlindada.velocidad())
+	}
+}
